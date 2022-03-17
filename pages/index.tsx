@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import AddContact from "../components/AddContact";
 import Contact from "../components/Contact";
 import FieldItem from "../components/FieldItem";
+import useStorage from "../hooks/useStorage";
 
 interface IContact {
 	name: string;
@@ -22,14 +23,12 @@ const Home: NextPage = () => {
 		address: "",
 	});
 
-	const initialValues: IContact = {
-		name: "",
-		email: "",
-		phone: "",
-		address: "",
-	};
-
 	const [contactList, setContactList] = useState<IContact[]>([]);
+
+	// const [contactList, setContactList] = useStorage<IContact[]>(
+	// 	"contactList",
+	// 	[]
+	// );
 
 	const validationSchema = Yup.object({
 		name: Yup.string().required("Required !"),
@@ -39,12 +38,10 @@ const Home: NextPage = () => {
 	});
 
 	const handleSubmit = (values: IContact) => {
-		setContactList([...contactList, values]);
-    setContact(initialValues);
-
+		const newContactList = [...contactList, values];
+		setContactList(newContactList);
+		localStorage.setItem("contactList", JSON.stringify(newContactList));
 	};
-
-	console.log(contactList);
 
 	return (
 		<div>
@@ -55,62 +52,64 @@ const Home: NextPage = () => {
 			</Head>
 
 			<main className="container my-5 mx-auto">
-				<h1 className="text-4xl font-bold text-center text-green-500 bg-slate-400/30 py-2 rounded-lg">
+				<h1 className="text-4xl font-bold text-center text-green-500 bg-black py-2 rounded-lg sticky top-0 z-50">
 					Contact List
 				</h1>
 
-				<div className="">
-					<Formik
-						initialValues={initialValues}
-						validationSchema={validationSchema}
-						onSubmit={handleSubmit}
-					>
-						{(formik) => (
-							<Form className="w-[35%] mx-auto my-10 bg-slate-500/50 p-10 flex flex-col gap-5 rounded-lg">
-								<FieldItem
-									label="Name"
-									type="text"
-									name="name"
-									placeholder="Minhaz Mithu"
-									isRequired={true}
-								/>
-								<FieldItem
-									label="Email"
-									type="email"
-									name="email"
-									placeholder="minhaz@domain.com"
-									isRequired={true}
-								/>
-								<FieldItem
-									label="Phone"
-									type="text"
-									name="phone"
-									placeholder="523465456"
-									isRequired={true}
-								/>
-								<FieldItem
-									label="Address"
-									type="text"
-									name="address"
-									placeholder="Ullapara, Sirajganj"
-								/>
-
-								<div className="flex items-center justify-center mt-10">
-									<input
-										type="submit"
-										value="Add Contact"
-										disabled={!(formik.dirty && formik.isValid)}
-										className="text-2xl font-bold bg-gradient-to-br from-lime-600 via-violet-800 to-fuchsia-600 px-5 py-2 rounded-md drop-shadow-lg text-yellow-400 cursor-pointer"
+				<div className="flex gap-10">
+					<div className="w-2/4">
+						<Formik
+							initialValues={contact}
+							validationSchema={validationSchema}
+							onSubmit={handleSubmit}
+						>
+							{(formik) => (
+								<Form className="mx-auto my-10 bg-slate-600/50 p-10 flex flex-col gap-5 rounded-lg w-full">
+									<FieldItem
+										label="Name"
+										type="text"
+										name="name"
+										placeholder="Minhaz Mithu"
+										isRequired={true}
 									/>
-								</div>
-							</Form>
-						)}
-					</Formik>
-					<div className="">
-            {
-              contactList.map((item, index) => <Contact key={index} item={item}/>)
-            }
-          </div>
+									<FieldItem
+										label="Email"
+										type="email"
+										name="email"
+										placeholder="minhaz@domain.com"
+										isRequired={true}
+									/>
+									<FieldItem
+										label="Phone"
+										type="text"
+										name="phone"
+										placeholder="523465456"
+										isRequired={true}
+									/>
+									<FieldItem
+										label="Address"
+										type="text"
+										name="address"
+										placeholder="Ullapara, Sirajganj"
+									/>
+
+									<div className="flex items-center justify-center mt-10">
+										<input
+											type="submit"
+											value="Add Contact"
+											disabled={!(formik.dirty && formik.isValid)}
+											className="text-2xl font-bold bg-gradient-to-br from-lime-600 via-violet-800 to-fuchsia-600 px-5 py-2 rounded-md drop-shadow-lg text-yellow-400 cursor-pointer"
+										/>
+									</div>
+								</Form>
+							)}
+						</Formik>
+					</div>
+					<div className="w-2/4 flex flex-col gap-5 my-10">
+						{contactList.map((item: IContact, index: number) => (
+							<Contact key={index} item={item} index={index} />
+						))}
+					</div>
 				</div>
 			</main>
 		</div>

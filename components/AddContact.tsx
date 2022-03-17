@@ -13,6 +13,7 @@ const AddContact = ({ contact, setContact }: any) => {
 
 	const handleSubmit = (values: any) => {
 		console.log("Form values", values);
+		setContact(contact);
 	};
 
 	return (

@@ -20,7 +20,7 @@ const FieldItem = ({
 		<div className="flex">
 			<div className="w-1/4">
 				<label htmlFor={name} className="text-white font-bold text-2xl ">
-					{label} :
+					{label} {isRequired && <sup className="text-rose-700">*</sup>}
 				</label>
 			</div>
 			<div className="w-3/4">
@@ -29,7 +29,7 @@ const FieldItem = ({
 					name={name}
 					placeholder={placeholder}
 					required={isRequired}
-					className="w-full px-5 py-1 rounded-md border-0"
+					className="w-full px-5 py-1 rounded-md border-0 bg-purple-800 text-xl"
 				/>
 				<div className="font-normal text-red-600 text-right">
 					<ErrorMessage name={name} />
